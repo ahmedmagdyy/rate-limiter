@@ -166,6 +166,9 @@ GEM
       thor (~> 1.0)
       zeitwerk (~> 2.5)
     rake (13.0.6)
+    redis (4.5.1)
+    redis-namespace (1.8.1)
+      redis (>= 3.0.4)
     regexp_parser (2.2.0)
     reline (0.3.1)
       io-console (~> 0.5)
@@ -220,6 +223,8 @@ DEPENDENCIES
   jbuilder
   puma (~> 5.0)
   rails (~> 7.0.1)
+  redis (~> 4.0)
+  redis-namespace
   selenium-webdriver
   sprockets-rails
   sqlite3 (~> 1.4)
