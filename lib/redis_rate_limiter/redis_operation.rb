@@ -38,7 +38,7 @@ module RedisRateLimiter
     end
 
     def get_blocked_key(key)
-      @redis.get(key)
+      @redis.ttl(key)
     end
 
   end
