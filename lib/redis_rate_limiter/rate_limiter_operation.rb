@@ -16,6 +16,27 @@ module RedisRateLimiter
       # check if the key exists in redis
       hash_exists = @redis_op.get_hash_by_key(redis_key)
       bucket_name = get_bucket_name(identifier)
+      if hash_exists
+        req_count_in_current_window = get_bucket_count(redis_key)
+        if req_count_in_current_window < @max_reqs
+          @redis_op.increment_hash_value(redis_key, bucket_name)
+          return true
+        end
+      else
+        # save ip address in hash
+        redis_key_hash = {"bucket_name" => bucket_name, "ip": ip}
+        @redis_op.set_hash(redis_key, redis_key_hash)
+        true
+      end
+    end
+
+    def get_bucket_count(redis_key)
+      # to get accurate bucket count & free space,
+      # we need to delete old buckets,
+      # out of time.now - window_time
+      # and then get the bucket count
+      delete_old_buckets(redis_key)
+      @redis_op.get_hash_count_by_key(redis_key)
     end
 
     def delete_old_buckets(redis_key)
