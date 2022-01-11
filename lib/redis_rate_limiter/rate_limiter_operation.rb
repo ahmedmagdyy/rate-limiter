@@ -16,7 +16,16 @@ module RedisRateLimiter
       # check if the key exists in redis
       hash_exists = @redis_op.get_hash_by_key(redis_key)
       bucket_name = get_bucket_name(identifier)
+    end
 
+    def delete_old_buckets(redis_key)
+      buckets = @redis_op.get_hash_keys(redis_key)
+      # delete buckets which are out of time.now - window_time
+      buckets.each do |bucket_name|
+        if bucket_name <= get_time - @window
+          @redis_op.delete_hash_by_key(redis_key)
+        end
+      end
     end
 
     def get_bucket_name(identifier)
