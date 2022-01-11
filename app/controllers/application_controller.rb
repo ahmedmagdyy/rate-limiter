@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include RedisRateLimiter
-  before_action :init_redis_rate_limiter, :track_rate_limit
+  before_action :init_redis_rate_limiter
+  before_action :track_rate_limit, only: [:index]
 
   def index
     render status: OK, plain: "OK"
@@ -15,10 +16,10 @@ class ApplicationController < ActionController::Base
   end
 
   def get_tracked_usage
-    @limiter.tracked_usage
+    render status: 200, plain: @limiter.tracked_usage("test")
   end
 
   def init_redis_rate_limiter
-    @limiter = RedisRateLimiter::RequestRateLimiter.new("index", ENV["window_time_in_sec"], ENV["allowed_req_per_window"], ENV["block_time_in_sec"])
+    @limiter = RedisRateLimiter::RequestRateLimiter.new("home", ENV["window_time_in_sec"], ENV["allowed_req_per_window"], ENV["block_time_in_sec"])
   end
 end

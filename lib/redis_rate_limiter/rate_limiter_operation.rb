@@ -1,4 +1,5 @@
 require_relative 'redis_operation'
+require 'json'
 
 module RedisRateLimiter
   class RateLimiterOperation
@@ -15,14 +16,14 @@ module RedisRateLimiter
       redis_key = get_redis_key(identifier)
       # if already exceeded max requests,
       # he is blocked for the @block_time
-      false if is_blocked?(redis_key)
-      # check if the key exists in redis
-      hash_exists = @redis_op.get_hash_by_key(redis_key)
-      bucket_name = get_bucket_name(identifier)
-      if hash_exists
+      if is_blocked?(redis_key)
+        return false
+      else
+        bucket_name = get_bucket_name(identifier)
         req_count_in_current_window = get_bucket_count(redis_key)
         if req_count_in_current_window < @max_reqs
-          @redis_op.increment_hash_value(redis_key, bucket_name)
+          redis_value = {:bucket_name => bucket_name, :ip => ip}
+          @redis_op.increment_hash_value(redis_key, JSON.generate(redis_value))
           return true
         else
           # if requests count in current window is equal to max requests allowed in window
@@ -30,22 +31,16 @@ module RedisRateLimiter
           @redis_op.set_blocked_key_with_expire(redis_key, @block_time)
           return false
         end
-      else
-        # save ip address in hash
-        redis_key_hash = {"bucket_name" => bucket_name, "ip": ip}
-        @redis_op.set_hash(redis_key, redis_key_hash)
-        true
       end
     end
 
-    def tracked_usage
-      @redis_op.get_all_hashes_by_key
+    def tracked_usage(identifier)
+      redis_key = get_redis_key(identifier)
+      @redis_op.get_all_hashes_by_key(redis_key)
     end
 
     def is_blocked?(redis_key)
-      blocked_key_exists = @redis_op.get_blocked_key(redis_key)
-      true if blocked_key_exists
-      false
+      @redis_op.get_blocked_key(redis_key) > 0
     end
 
     def get_bucket_count(redis_key)
