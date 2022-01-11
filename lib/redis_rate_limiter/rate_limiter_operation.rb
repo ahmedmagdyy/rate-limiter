@@ -38,6 +38,10 @@ module RedisRateLimiter
       end
     end
 
+    def tracked_usage
+      @redis_op.get_all_hashes_by_key
+    end
+
     def is_blocked?(redis_key)
       blocked_key_exists = @redis_op.get_blocked_key(redis_key)
       true if blocked_key_exists
