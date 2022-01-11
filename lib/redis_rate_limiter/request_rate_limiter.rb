@@ -14,5 +14,13 @@ module RedisRateLimiter
       end
       @request_rate_limiter = RateLimiterOperation.new(key, window_time, max_requests_count, block_time)
     end
+
+    def track_api_usage(identifier, ip)
+      @request_rate_limiter.track_api_usage(identifier, ip)
+    end
+
+    def tracked_usage
+      @request_rate_limiter.tracked_usage
+    end
   end
 end
