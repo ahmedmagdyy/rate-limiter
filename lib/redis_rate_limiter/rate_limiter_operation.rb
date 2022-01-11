@@ -37,7 +37,18 @@ module RedisRateLimiter
     end
 
     def tracked_usage
-      @redis_op.get_all_hashes
+      array_of_hashes = @redis_op.get_all_hashes
+      result = Hash.new
+      array_of_hashes.each do |hash|
+        hash.each do |key, value|
+          ip = key.split(":")[1]
+          identifier ||= key.split(":")[0].split("_").take(2).join(" ")
+          result[identifier] ||= Hash.new
+          result[identifier]["ip"].nil? ? result[identifier]["ip"] = [ip] : result[identifier]["ip"].append(ip)
+          result[identifier]["usage"].nil? ? result[identifier]["usage"] = value.to_i : result[identifier]["usage"] += value.to_i
+        end
+      end
+      return result
     end
 
     def is_blocked?(key)
