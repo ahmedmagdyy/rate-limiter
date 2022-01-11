@@ -1,24 +1,69 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Rate Limiter Module
 
-Things you may want to cover:
+Ruby on rails rate limiter module using **sliding window algorithm**.
 
-* Ruby version
+## Requirements
 
-* System dependencies
+- [Ruby](https://www.ruby-lang.org/en/documentation/installation/) 2.7.0+ required, 3.0+ preferred.
 
-* Configuration
+- Rails 7.0.1. to install Rails.
+```
+gem install rails
+```
 
-* Database creation
+- Redis server. you can get redis via [docker](https://docs.docker.com/engine/install/).
+```
+docker run -d -p 6379:6379 redis
+```
 
-* Database initialization
 
-* How to run the test suite
+## Run
+- Clone Repo.
+```
+git clone https://github.com/ahmedmagdyy/rate-limiter.git
+cd rate-limiter
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+- create ```.env``` file based on ```.env.example```
 
-* Deployment instructions
+- install dependencies.
+```
+bundle install
+```
 
-* ...
+- Run application.
+```
+rails s
+```
+Go to ```http://localhost:3000``` you should see ```Allowed Request!``` printed. If requests count reached the limit, you will get ```Too many requests!``` and will be blocked for some time based on your ```.env``` values.
+## Usage
+- Module initialization requires the following parameters:
+
+```key```: a unique key to identify what is being rated limited, e.g route, this key is part of the Redis key used in creating buckets.
+
+```interval```: window length in seconds.
+
+```limit```: max requests count allowed in the interval.
+
+```block_time```: block requests for this amount of time in second.
+```ruby
+@limiter = RedisRateLimiter::RequestRateLimiter.new(key, interval, limit, block_time)
+```
+
+- ```track_api_usage``` function accepts two parameters:
+
+```identifier```: a unique string to identify the consumer, can be user id, IP, session id, JWT, .... etc.
+
+```ip```: consumer ip address.
+```ruby
+@limiter.track_api_usage(identifier, request.ip)
+```
+
+- ```tracked_usage``` function returns hash contains all consumers with ip and their usage.
+```ruby
+@limiter.tracked_usage
+```
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
