@@ -8,5 +8,9 @@ module RedisRateLimiter
       @redis.hget(key)
     end
 
+    def delete_hash_by_key(key)
+      @redis.hdel(key)
+    end
+
   end
 end
