@@ -4,12 +4,8 @@ module RedisRateLimiter
       @redis = $redis
     end
 
-    def get_hash_by_key(key)
-      @redis.hget(key)
-    end
-
-    def get_all_hashes_by_key
-      @redis.hgetall()
+    def get_all_hashes_by_key(key)
+      @redis.hgetall(key)
     end
 
     def get_hash_keys(key)
@@ -28,12 +24,12 @@ module RedisRateLimiter
       @redis.hincrby(key, bucket_name, 1)
     end
 
-    def delete_hash_by_key(key)
-      @redis.hdel(key)
+    def delete_hash_by_key(key, bucket_name)
+      @redis.hdel(key, bucket_name)
     end
 
     def set_blocked_key_with_expire(key, expire)
-      @redis.set(key)
+      @redis.set(key, 1)
       @redis.expire(key, expire)
     end
 
