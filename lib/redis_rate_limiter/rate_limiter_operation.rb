@@ -9,5 +9,10 @@ module RedisRateLimiter
       @block_time = block_time # time to block requests in seconds
       @redis_op = RedisOperation.new
     end
+
+    def get_redis_key(identifier)
+      # e.g "login_127.0.0.1"
+      "#{@key}_#{identifier}"
+    end
   end
 end
