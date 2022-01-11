@@ -12,15 +12,15 @@ module RedisRateLimiter
       if !max_requests_count.is_a?(Integer) && max_requests_count.to_i <= 0
         raise("max requests value must be integer and bigger than 0")
       end
-      @request_rate_limiter = RateLimiterOperation.new(key, window_time, max_requests_count, block_time)
+      @request_rate_limiter = RateLimiterOperation.new(key, window_time.to_i, max_requests_count.to_i, block_time.to_i)
     end
 
     def track_api_usage(identifier, ip)
       @request_rate_limiter.track_api_usage(identifier, ip)
     end
 
-    def tracked_usage
-      @request_rate_limiter.tracked_usage
+    def tracked_usage(identifier)
+      @request_rate_limiter.tracked_usage(identifier)
     end
   end
 end
