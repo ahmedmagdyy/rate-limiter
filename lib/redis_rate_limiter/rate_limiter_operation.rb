@@ -14,9 +14,10 @@ module RedisRateLimiter
     # identifier can be user_id, ip, session_id, jwt_token
     def track_api_usage(identifier, ip)
       redis_key = get_redis_key(identifier)
+      blocked_key = "#{redis_key}_blocked"
       # if already exceeded max requests,
       # he is blocked for the @block_time
-      if is_blocked?(redis_key)
+      if is_blocked?(blocked_key)
         return false
       else
         bucket_name = get_bucket_name(identifier)
@@ -28,7 +29,7 @@ module RedisRateLimiter
         else
           # if requests count in current window is equal to max requests allowed in window
           # block the identifier for @block_time
-          @redis_op.set_blocked_key_with_expire(redis_key, @block_time)
+          @redis_op.set_blocked_key_with_expire(blocked_key, @block_time)
           return false
         end
       end
@@ -39,8 +40,8 @@ module RedisRateLimiter
       @redis_op.get_all_hashes_by_key(redis_key)
     end
 
-    def is_blocked?(redis_key)
-      @redis_op.get_blocked_key(redis_key) > 0
+    def is_blocked?(key)
+      @redis_op.get_blocked_key(key) > 0
     end
 
     def get_bucket_count(redis_key)
