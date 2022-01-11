@@ -53,19 +53,21 @@ module RedisRateLimiter
       # we need to delete old buckets,
       # out of time.now - window_time
       # and then get the bucket count
-      delete_old_buckets(redis_key)
-      @redis_op.get_hash_count_by_key(redis_key)
+      # delete_old_buckets(redis_key)
+      @redis_op.get_hash_values(redis_key).map(&:to_i).reduce(:+) || 0
     end
 
-    def delete_old_buckets(redis_key)
-      buckets = @redis_op.get_hash_keys(redis_key)
-      # delete buckets which are out of time.now - window_time
-      buckets.each do |bucket_name|
-        if bucket_name <= get_time - @window
-          @redis_op.delete_hash_by_key(redis_key)
-        end
-      end
-    end
+    # def delete_old_buckets(redis_key)
+    #   buckets = @redis_op.get_hash_keys(redis_key)
+    #   # delete buckets which are out of time.now - window_time
+    #   buckets.each do |bucket|
+    #     bucket_json = JSON.parse(bucket)
+    #     bucket_name = bucket_json['bucket_name']
+    #     if bucket_name.split("_")[2].to_i <= get_time - @window
+    #       @redis_op.delete_hash_by_key(redis_key, bucket_name)
+    #     end
+    #   end
+    # end
 
     def get_bucket_name(identifier)
       "#{get_redis_key(identifier)}_#{get_time}"
@@ -77,7 +79,7 @@ module RedisRateLimiter
 
     def get_redis_key(identifier)
       # e.g "login_127.0.0.1"
-      "#{@key}_#{identifier}"
+      "#{@id}_#{identifier}"
     end
   end
 end
