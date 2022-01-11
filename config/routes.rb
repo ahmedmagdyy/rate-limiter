@@ -3,4 +3,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "application#index"
+  get '/tracked', to: 'application#get_tracked_usage'
+
 end
