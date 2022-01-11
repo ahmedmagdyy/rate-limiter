@@ -16,8 +16,8 @@ module RedisRateLimiter
       @redis.hkeys(key)
     end
 
-    def set_hash(key, data)
-      @redis.hset(key, data, 1)
+    def get_hash_values(key)
+      @redis.hvals(key)
     end
 
     def get_hash_count_by_key(key)
