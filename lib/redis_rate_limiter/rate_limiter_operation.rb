@@ -13,8 +13,8 @@ module RedisRateLimiter
 
     # identifier can be user_id, ip, session_id, jwt_token
     def track_api_usage(identifier, ip)
-      redis_key = get_redis_key(identifier)
-      blocked_key = "#{redis_key}_blocked"
+      redis_key = "#{get_redis_key(identifier)}_active"
+      blocked_key = "#{get_redis_key(identifier)}_blocked"
       # if already exceeded max requests,
       # he is blocked for the @block_time
       if is_blocked?(blocked_key)
@@ -36,9 +36,8 @@ module RedisRateLimiter
       end
     end
 
-    def tracked_usage(identifier)
-      redis_key = get_redis_key(identifier)
-      @redis_op.get_all_hashes_by_key(redis_key)
+    def tracked_usage
+      @redis_op.get_all_hashes
     end
 
     def is_blocked?(key)

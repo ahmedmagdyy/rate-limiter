@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
   end
 
   def get_tracked_usage
-    render status: 200, plain: @limiter.tracked_usage("test")
+    render status: 200, plain: @limiter.tracked_usage
   end
 
   def init_redis_rate_limiter
