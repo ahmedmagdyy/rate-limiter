@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   include RedisRateLimiter
-  before_action :track_rate_limit
+  before_action :init_redis_rate_limiter, :track_rate_limit
 
   def index
     render status: OK, plain: "OK"
