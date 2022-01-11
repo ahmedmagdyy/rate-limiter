@@ -10,6 +10,23 @@ module RedisRateLimiter
       @redis_op = RedisOperation.new
     end
 
+    # identifier can be user_id, ip, session_id, jwt_token
+    def track_api_usage(identifier, ip)
+      redis_key = get_redis_key(identifier)
+      # check if the key exists in redis
+      hash_exists = @redis_op.get_hash_by_key(redis_key)
+      bucket_name = get_bucket_name(identifier)
+
+    end
+
+    def get_bucket_name(identifier)
+      "#{get_redis_key(identifier)}_#{get_time}"
+    end
+
+    def get_time
+      Time.now.to_i
+    end
+
     def get_redis_key(identifier)
       # e.g "login_127.0.0.1"
       "#{@key}_#{identifier}"
