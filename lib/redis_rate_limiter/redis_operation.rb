@@ -4,8 +4,16 @@ module RedisRateLimiter
       @redis = $redis
     end
 
-    def get_all_hashes_by_key(key)
-      @redis.hgetall(key)
+    def get_all_hashes
+      puts "Getting all hashes by key"
+      # active redis key format: key_identifier_active
+      hash_keys = @redis.keys("*_active")
+      $redis.multi do
+        hash_keys.each do |k|
+          puts "Getting hash #{k}"
+          @redis.hgetall(k)
+        end
+      end
     end
 
     def get_hash_keys(key)
