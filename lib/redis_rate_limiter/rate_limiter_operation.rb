@@ -21,6 +21,11 @@ module RedisRateLimiter
         if req_count_in_current_window < @max_reqs
           @redis_op.increment_hash_value(redis_key, bucket_name)
           return true
+        else
+          # if requests count in current window is equal to max requests allowed in window
+          # block the identifier for @block_time
+          @redis_op.set_blocked_key_with_expire(redis_key, @block_time)
+          return false
         end
       else
         # save ip address in hash
