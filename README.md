@@ -47,6 +47,8 @@ rspec
 *NOTE: test will run on the same redis server.*
 
 Go to ```http://localhost:3000/track``` you should see ```Allowed Request!``` printed. If requests count reached the limit, you will get ```Too many requests!``` and will be blocked for some time based on your ```.env``` values.
+
+Go to ```http://localhost:3000/tracked``` to get all tracked consumers with ip addresses and their usage.
 ## Usage
 - Module initialization requires the following parameters:
 
