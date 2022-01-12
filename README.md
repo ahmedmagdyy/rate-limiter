@@ -26,7 +26,9 @@ git clone https://github.com/ahmedmagdyy/rate-limiter.git
 cd rate-limiter
 ```
 
-- create ```.env``` file based on ```.env.example```
+- create ```.env```  & ```.env.test``` files based on ```.env.example```.
+
+*NOTE: don't use the same identifier in both files, to avoid conflict.*
 
 - install dependencies.
 ```
@@ -37,17 +39,24 @@ bundle install
 ```
 rails s
 ```
-Go to ```http://localhost:3000``` you should see ```Allowed Request!``` printed. If requests count reached the limit, you will get ```Too many requests!``` and will be blocked for some time based on your ```.env``` values.
+
+- Run test.
+```ruby
+rspec
+```
+*NOTE: test will rub on the same redis server.*
+
+Go to ```http://localhost:3000/track``` you should see ```Allowed Request!``` printed. If requests count reached the limit, you will get ```Too many requests!``` and will be blocked for some time based on your ```.env``` values.
 ## Usage
 - Module initialization requires the following parameters:
 
 ```key```: a unique key to identify what is being rated limited, e.g route, this key is part of the Redis key used in creating buckets.
 
-```interval```: window length in seconds.
+```interval```: window length in seconds, default: 10 sec.
 
-```limit```: max requests count allowed in the interval.
+```limit```: max requests count allowed in the interval, default 50 request.
 
-```block_time```: block requests for this amount of time in second.
+```block_time```: block requests for this amount of time in second, default 5 minutes.
 ```ruby
 @limiter = RedisRateLimiter::RequestRateLimiter.new(key, interval, limit, block_time)
 ```
