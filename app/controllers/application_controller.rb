@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   before_action :init_redis_rate_limiter
 
   def track_rate_limit
-    if @limiter.track_api_usage("test", request.ip)
+    if @limiter.track_api_usage(ENV["identifier"], request.ip)
       render status: 200, plain: "Allowed Request!"
     else
       render status: 429, plain: "Too many requests!"
