@@ -44,7 +44,7 @@ rails s
 ```ruby
 rspec
 ```
-*NOTE: test will rub on the same redis server.*
+*NOTE: test will run on the same redis server.*
 
 Go to ```http://localhost:3000/track``` you should see ```Allowed Request!``` printed. If requests count reached the limit, you will get ```Too many requests!``` and will be blocked for some time based on your ```.env``` values.
 ## Usage
