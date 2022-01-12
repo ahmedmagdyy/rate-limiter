@@ -13,7 +13,7 @@ Ruby on rails rate limiter module using **sliding window algorithm**.
 gem install rails
 ```
 
-- Redis server. you can get redis via [docker](https://docs.docker.com/engine/install/).
+- Redis server running on ```localhost:6379```. you can get redis via [docker](https://docs.docker.com/engine/install/).
 ```
 docker run -d -p 6379:6379 redis
 ```
